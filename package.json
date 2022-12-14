@@ -1,0 +1,23 @@
+{
+  "name": "amplify-slack-bot",
+  "version": "1.0.0",
+  "description": "Slack App for Amplify Console",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fossamagna/amplify-slack-bot.git"
+  },
+  "author": {
+    "name": "Masahiko Murakami",
+    "email": "fossamagna2@gmail.com",
+    "url": "https://fossamagna.github.io/"
+  },
+  "license": "Apache-2.0",
+  "keywords": [
+    "aws",
+    "amplify",
+    "lambda",
+    "nodejs",
+    "slack",
+    "bot"
+  ]
+}
