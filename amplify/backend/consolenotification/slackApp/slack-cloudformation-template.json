@@ -1,0 +1,188 @@
+{
+    "AWSTemplateFormatVersion": "2010-09-09",
+    "Description": "Amplify Console notification resource stack creation using Amplify CLI",
+    "Parameters": {
+        "env": {
+            "Type": "String"
+        },
+        "appId": {
+            "Type": "String",
+            "Description": "Amplify Application ID"
+        },
+        "functionslackAppArn": {
+            "Type": "String"
+        }
+    },
+    "Conditions": {
+        "ShouldNotCreateEnvResources": {
+            "Fn::Equals": [
+                {
+                    "Ref": "env"
+                },
+                "NONE"
+            ]
+        }
+    },
+    "Resources": {
+        "EventRule": {
+            "Type" : "AWS::Events::Rule",
+            "Properties" : {
+                "Description" : "EventRule for Amplify Console",
+                "EventPattern" : {
+                    "detail": {
+                        "appId": [
+                            {"Ref": "appId"}
+                        ],
+                        "branchName": [
+                            {"Ref": "env"}
+                        ],
+                        "jobStatus": [
+                            "SUCCEED",
+                            "FAILED",
+                            "STARTED"
+                        ]
+                    },
+                    "detail-type": [
+                        "Amplify Deployment Status Change"
+                    ],
+                    "source": [
+                        "aws.amplify"
+                    ]
+                },
+                "State": "ENABLED",
+                "Targets": [
+                    {
+                        "Id": "AmplifyNotificationSNSTopic",
+                        "Arn": { "Ref": "SNSTopic" }
+                    }
+                ]
+              }
+        },
+        "EventTopicPolicy": {
+            "Type": "AWS::SNS::TopicPolicy",
+            "Properties": {
+              "PolicyDocument": {
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": { "Service": "events.amazonaws.com" },
+                    "Action": "sns:Publish",
+                    "Resource": "*"
+                  }
+                ]
+              },
+              "Topics": [ { "Ref": "SNSTopic" } ]
+            }
+        },
+        "SNSTopic": {
+            "Type" : "AWS::SNS::Topic",
+            "Properties": {
+                "DisplayName": {
+                    "Fn::If": [
+                        "ShouldNotCreateEnvResources",
+                        "amplfy-console-notification",
+                        {
+    
+                            "Fn::Join": [
+                                "",
+                                [
+                                    "amplfy-console-notification",
+                                    "-",
+                                    {
+                                        "Ref": "env"
+                                    }
+                                ]
+                            ]
+                        }
+                    ]
+                },
+                "Subscription": [
+                    {
+                        "Endpoint": { "Ref": "functionslackAppArn" },
+                        "Protocol": "lambda"
+                    }
+                ],
+                "TopicName": {
+                    "Fn::If": [
+                        "ShouldNotCreateEnvResources",
+                        "amplfy-console-notification",
+                        {
+    
+                            "Fn::Join": [
+                                "",
+                                [
+                                    "amplfy-console-notification",
+                                    "-",
+                                    {
+                                        "Ref": "env"
+                                    }
+                                ]
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        "LambdaPermission" : {
+            "Type" : "AWS::Lambda::Permission",
+            "Properties" : {
+                "Action" : "lambda:InvokeFunction",
+                "FunctionName" : { "Ref": "functionslackAppArn" },
+                "Principal" : "sns.amazonaws.com",
+                "SourceArn" : { "Ref" : "SNSTopic" }
+            }
+        },
+        "FunctionUrl": {
+            "Type" : "AWS::Lambda::Url",
+            "Properties" : {
+                "AuthType" : "NONE",
+                "Cors" : {
+                    "AllowCredentials" : false,
+                    "AllowMethods" : [ "POST" ],
+                    "AllowOrigins" : [ "*" ]
+                },
+                "TargetFunctionArn" : {
+                    "Ref": "functionslackAppArn"
+                }
+            }
+        },
+        "PermissionForURLInvoke": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+                "Action": "lambda:InvokeFunctionUrl",
+                "FunctionName": {
+                    "Ref": "functionslackAppArn"
+                },
+                "Principal": "*",
+                "FunctionUrlAuthType": "NONE"
+            }
+        }
+    },
+    "Outputs": {
+        "SNSTopicArn": {
+            "Value": {
+                "Ref": "SNSTopic"
+            }
+        },
+        "SNSTopicName": {
+            "Value": {"Fn::GetAtt": ["SNSTopic", "TopicName"]}
+        },
+        "EventRuleId": {
+            "Value": {
+                "Ref": "EventRule"
+            }
+        },
+        "EventRuleArn": {
+            "Value": {"Fn::GetAtt": ["EventRule", "Arn"]}
+        },
+        "Region": {
+            "Value": {
+                "Ref": "AWS::Region"
+            }
+        },
+        "FunctionUrl": {
+            "Value": {"Fn::GetAtt": ["FunctionUrl", "FunctionUrl"]}
+        }
+        
+    }
+}

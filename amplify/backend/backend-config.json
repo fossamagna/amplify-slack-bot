@@ -1,1 +1,24 @@
-{}
+{
+  "function": {
+    "slackApp": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "consolenotification": {
+    "slackApp": {
+      "service": "AmplifyConsoleNotification",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [
+        {
+          "category": "function",
+          "resourceName": "slackApp",
+          "attributes": [
+            "Arn"
+          ]
+        }
+      ]
+    }
+  }
+}
