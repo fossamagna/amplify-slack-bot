@@ -16,9 +16,6 @@
     "s3Key": {
       "Type": "String"
     },
-    "slackDefaultChannel": {
-      "Type": "String"
-    },
     "secretsPathAmplifyAppId": {
       "Type": "String"
     }
@@ -76,9 +73,6 @@
             "REGION": {
               "Ref": "AWS::Region"
             },
-            "SLACK_DEFAULT_CHANNEL": {
-              "Ref": "slackDefaultChannel"
-            },
             "SLACK_SIGNING_SECRET": {
               "Fn::Join": [
                 "",
@@ -120,6 +114,28 @@
                     ]
                   },
                   "SLACK_BOT_TOKEN"
+                ]
+              ]
+            },
+            "SLACK_DEFAULT_CHANNEL": {
+              "Fn::Join": [
+                "",
+                [
+                  {
+                    "Fn::Sub": [
+                      "/amplify/${appId}/${env}/AMPLIFY_${functionName}_",
+                      {
+                        "appId": {
+                          "Ref": "secretsPathAmplifyAppId"
+                        },
+                        "env": {
+                          "Ref": "env"
+                        },
+                        "functionName": "slackApp"
+                      }
+                    ]
+                  },
+                  "SLACK_DEFAULT_CHANNEL"
                 ]
               ]
             }

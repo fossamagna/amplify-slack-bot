@@ -5,7 +5,7 @@ const aws = require('aws-sdk');
 
 const { Parameters } = await (new aws.SSM())
   .getParameters({
-    Names: ["SLACK_SIGNING_SECRET","SLACK_BOT_TOKEN"].map(secretName => process.env[secretName]),
+    Names: ["SLACK_SIGNING_SECRET","SLACK_BOT_TOKEN","SLACK_DEFAULT_CHANNEL"].map(secretName => process.env[secretName]),
     WithDecryption: true,
   })
   .promise();
@@ -38,12 +38,13 @@ const getSecrets = async (names) => {
 const secrets = await getSecrets([
   process.env.SLACK_SIGNING_SECRET,
   process.env.SLACK_BOT_TOKEN,
+  process.env.SLACK_DEFAULT_CHANNEL
 ]);
 
 const app = new AmplifyConsoleSlackApp({
   signingSecret: secrets[process.env.SLACK_SIGNING_SECRET],
   token: secrets[process.env.SLACK_BOT_TOKEN],
-  defaultChannel: process.env.SLACK_DEFAULT_CHANNEL,
+  defaultChannel: secrets[process.env.SLACK_DEFAULT_CHANNEL],
   logLevel: LogLevel.DEBUG,
 });
 

@@ -1,13 +1,9 @@
 {
   "lambdaLayers": [],
-  "environmentVariableList": [
-    {
-      "cloudFormationParameterName": "slackDefaultChannel",
-      "environmentVariableName": "SLACK_DEFAULT_CHANNEL"
-    }
-  ],
+  "environmentVariableList": [],
   "secretNames": [
     "SLACK_SIGNING_SECRET",
-    "SLACK_BOT_TOKEN"
+    "SLACK_BOT_TOKEN",
+    "SLACK_DEFAULT_CHANNEL"
   ]
 }
