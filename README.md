@@ -9,12 +9,7 @@
     </li>
     <li>
       <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
     </li>
-    <li><a href="#usage">Usage</a></li>
     <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#license">License</a></li>
@@ -30,6 +25,11 @@ This project is Slack App to notifications the build result from AWS Amplify Con
 
 You can add email notifications to notify stakeholders when a build succeeds or fails. But, cannot notify to Chat service (e.g. Slack).
 If you use this app, You can take notification from Amplify Console with Slack.
+
+<!-- GETTING STARTED -->
+## Getting Started
+
+[![amplifybutton](https://oneclick.amplifyapp.com/button.svg)](https://console.aws.amazon.com/amplify/home#/deploy?repo=https://github.com/fossamagna/amplify-slack-bot)
 
 <!-- ROADMAP -->
 ## Roadmap
